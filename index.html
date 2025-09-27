@@ -1,0 +1,1839 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CATALAN COMPANY - Order Scanning System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --danger: #f72585;
+            --warning: #f8961e;
+            --info: #4895ef;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --purple: #7209b7;
+            --teal: #4895ef;
+            --orange: #ff9e00;
+            --green: #10b981; /* Updated to a more vibrant green */
+            --red: #dc2626; /* Updated to a stronger red */
+            --yellow: #ca8a04; /* Updated to a stronger yellow */
+            --blue: #60a5fa;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--dark);
+        }
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .login-container, .main-container {
+            padding: 40px;
+            text-align: center;
+            border-radius: 16px;
+            background: white;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+            margin-bottom: 30px;
+        }
+        .logo {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--primary), var(--purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+        }
+        .app-title {
+            font-size: 22px;
+            color: #555;
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+        input, button, select, textarea {
+            padding: 14px 20px;
+            margin: 12px 6px;
+            border-radius: 12px;
+            border: 2px solid #e9ecef;
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+        button {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            border: none;
+            padding: 14px 28px;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(67, 97, 238, 0.4);
+        }
+        .manual-submit-btn {
+            background: linear-gradient(90deg, var(--danger), #b5179e);
+        }
+        .manual-submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(247, 37, 133, 0.4);
+        }
+        .undo-btn {
+            background: linear-gradient(90deg, var(--warning), #e63946);
+        }
+        .undo-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(248, 150, 30, 0.4);
+        }
+        .redo-btn {
+            background: linear-gradient(90deg, var(--purple), #3a0ca3);
+        }
+        .redo-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(114, 9, 183, 0.4);
+        }
+        .over-scan-btn {
+            background: linear-gradient(90deg, #f94144, #f37a1d);
+        }
+        .over-scan-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(249, 65, 68, 0.4);
+        }
+        .submit-btn {
+            background: linear-gradient(90deg, var(--green), #059669);
+        }
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        }
+        .history-btn {
+            background: linear-gradient(90deg, var(--purple), #5b21b6);
+        }
+        .history-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(114, 9, 183, 0.4);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0 20px;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+        }
+        th, td {
+            border: 1px solid #e0e0e0;
+            padding: 16px;
+            text-align: left;
+            font-size: 15px;
+        }
+        th {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        tr:nth-child(even) {
+            background-color: #fafafa;
+        }
+        tr:hover {
+            background-color: #f0f7ff;
+            transition: background 0.3s ease;
+        }
+        /* Full Row Color Styling Based on Status */
+        .status-not-scanned {
+            background-color: #fef2f2 !important; /* Solid light red/pink */
+            border-left: 6px solid var(--red);
+            color: var(--red);
+            font-weight: 500;
+        }
+        .status-partial {
+            background-color: #fffbeb !important; /* Solid light yellow */
+            border-left: 6px solid var(--yellow);
+            color: var(--yellow);
+            font-weight: 500;
+        }
+        .status-completed {
+            background-color: #ecfdf5 !important; /* Solid light green */
+            border-left: 6px solid var(--green);
+            color: #059669;
+            font-weight: 600;
+        }
+        .status-over-scanned {
+            background-color: #fff5f5 !important; /* Solid very light red */
+            border-left: 6px solid #f94144;
+            color: #dc2626;
+            font-weight: 600;
+        }
+        .status-not-in-order,
+        .status-extra {
+            background-color: #fdf2f8 !important; /* Solid light pink/red */
+            border-left: 6px solid var(--danger);
+            color: #be185d;
+            font-weight: 500;
+        }
+        .hidden {
+            display: none;
+        }
+        .action-buttons {
+            margin: 30px 0 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            padding: 20px 0;
+            background: #f8fafc;
+            border-radius: 16px;
+            box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.05);
+        }
+        /* Dashboard Stats Section */
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+        .summary-card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border-top: 4px solid var(--primary);
+        }
+        .summary-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+        }
+        .scan-stats {
+            grid-column: 1 / -1;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+        }
+        .stat-item {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #bae6fd;
+        }
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 12px 0;
+            color: var(--primary);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        .scan-area {
+            margin: 40px 0;
+            padding: 30px;
+            border: 3px dashed var(--primary);
+            border-radius: 20px;
+            position: relative;
+            background: #f0f9ff;
+            box-shadow: 0 8px 32px rgba(67, 97, 238, 0.1);
+            transition: all 0.3s ease;
+        }
+        .scan-area:hover {
+            transform: scale(1.01);
+            box-shadow: 0 12px 40px rgba(67, 97, 238, 0.2);
+        }
+        #scannerInput {
+            width: 100%;
+            padding: 20px;
+            font-size: 20px;
+            text-align: center;
+            border-radius: 14px;
+            border: 3px solid var(--primary);
+            background: white;
+            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.1);
+            font-weight: 600;
+        }
+        #countdownTimer {
+            position: absolute;
+            right: 30px;
+            top: 30px;
+            background: linear-gradient(90deg, var(--danger), var(--orange));
+            color: white;
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 16px;
+            box-shadow: 0 4px 15px rgba(247, 37, 133, 0.3);
+            animation: pulse 1.5s infinite;
+            display: none;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        #scannedItems {
+            height: 220px;
+            overflow-y: auto;
+            border: 2px solid #bae6fd;
+            padding: 20px;
+            margin-top: 25px;
+            text-align: left;
+            border-radius: 14px;
+            background: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        /* Progress Bar */
+        .progress-container {
+            margin: 30px 0;
+            text-align: center;
+        }
+        .progress-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 15px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e2e8f0;
+            border-radius: 50px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border: 2px solid #cbd5e1;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #f8961e, #f94144, #4361ee, #4cc9f0);
+            background-size: 300% 100%;
+            width: 0%;
+            transition: width 0.6s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            animation: gradientShift 3s ease infinite;
+        }
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .auto-submit-info {
+            text-align: center;
+            color: var(--success);
+            font-weight: 600;
+            margin-top: 15px;
+            font-size: 16px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        /* Manual Entry Section */
+        .manual-entry-section {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px dashed #cbd5e1;
+        }
+        .manual-entry-section h4 {
+            margin-bottom: 15px;
+            color: var(--danger);
+            font-size: 20px;
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        .manual-input-container {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        #manualInput {
+            width: 350px;
+            padding: 14px;
+            font-size: 16px;
+            text-align: center;
+            border-radius: 12px;
+            border: 2px solid var(--danger);
+            background: white;
+            box-shadow: 0 4px 12px rgba(247, 37, 133, 0.1);
+        }
+        /* Legend Section */
+        .legend-container {
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            margin: 25px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+        .legend-title {
+            margin: 0 0 15px 0;
+            color: var(--primary);
+            font-weight: 600;
+        }
+        .legend-items {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            font-size: 14px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .legend-color {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+        }
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 30px;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 1000px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: modalFadeIn 0.3s ease-out;
+        }
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+        }
+        /* Current User Display */
+        #currentUserDisplay {
+            background: linear-gradient(90deg, var(--info), var(--primary));
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 18px;
+            display: inline-block;
+            margin: 20px 0;
+            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+        }
+        /* 🆕 Submit Note Modal */
+        #submitNoteModal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.6);
+        }
+        #submitNoteModal .modal-content {
+            background-color: #ffffff;
+            margin: 10% auto;
+            padding: 30px;
+            border: 1px solid #ddd;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        #submitNoteTextarea {
+            width: 100%;
+            height: 120px;
+            resize: vertical;
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            padding: 15px;
+            border-radius: 12px;
+            border: 2px solid #e9ecef;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        /* 🆕 Emergency Stop Button for Alarm */
+        #emergencyStopBtn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 9999;
+            padding: 16px 32px;
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #dc2626, #b91c1c);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(220, 38, 38, 0.5);
+            animation: pulseRed 1s infinite;
+            display: none;
+        }
+        #emergencyStopBtn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 30px rgba(220, 38, 38, 0.7);
+        }
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                padding: 20px;
+            }
+            .login-container, .main-container {
+                padding: 25px;
+            }
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            #manualInput {
+                width: 100%;
+                max-width: 300px;
+            }
+            .dashboard-stats {
+                grid-template-columns: 1fr;
+            }
+            .scan-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        /* Scrollbar styling */
+        #scannedItems::-webkit-scrollbar,
+        .modal-content table tbody::-webkit-scrollbar {
+            width: 8px;
+        }
+        #scannedItems::-webkit-scrollbar-track,
+        .modal-content table tbody::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        #scannedItems::-webkit-scrollbar-thumb,
+        .modal-content table tbody::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+        #scannedItems::-webkit-scrollbar-thumb:hover,
+        .modal-content table tbody::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary);
+        }
+        /* Alert Popup Style */
+        .alert-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #f8d7da;
+            color: #721c24;
+            border: 3px solid #f5c6cb;
+            padding: 20px 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 2000;
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            animation: popupFade 0.5s ease-out;
+        }
+        @keyframes popupFade {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+            100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Login Section -->
+        <div id="loginSection" class="login-container">
+            <div class="logo">CATALAN COMPANY PVT LTD</div>
+            <div class="app-title">✨ Order Scanning System - Login</div>
+            <p style="color: #666; margin-bottom: 25px;">Select your username and enter the password to begin.</p>
+            <div>
+                <select id="username" required style="width: 300px;">
+                    <option value="">-- Select Your Username --</option>
+                    <option value="lakmal">lakmal (Admin)</option>
+                    <option value="dilshan">dilshan (Admin)</option>
+                    <option value="mithun">mithun (Scanner)</option>
+                    <option value="pathum">pathum (Scanner)</option>
+                    <option value="deneth">deneth (Scanner)</option>
+                </select>
+            </div>
+            <div>
+                <input type="password" id="password" placeholder="Enter Password: 'catalan'" required style="width: 300px;">
+            </div>
+            <div>
+                <button id="loginBtn" style="padding: 16px 40px; font-size: 18px;">🔓 Login</button>
+            </div>
+            <p style="margin-top: 20px; font-size: 14px; color: #888;">ℹ️ The password for all users is '<strong>catalan</strong>'.</p>
+        </div>
+        <!-- Main Application Section -->
+        <div id="mainSection" class="main-container hidden">
+            <div class="logo">CATALAN COMPANY PVT LTD</div>
+            <div class="app-title">📦 Order Scanning Dashboard</div>
+            <!-- Current User Display -->
+            <div id="currentUserDisplay" style="text-align: center;">
+                Logged in as: <span id="currentUserName">User</span>
+            </div>
+            <!-- Admin Upload Section (Only for lakmal) -->
+            <div id="adminUploadSection" class="action-buttons hidden">
+                <input type="text" id="orderNumberInput" placeholder="Enter Order Number (e.g., PO-1001)" style="width: 250px; padding: 12px; font-size: 14px;">
+                <input type="file" id="orderFile" accept=".csv" style="width: auto;">
+                <button id="uploadBtn">📤 Upload & Save Order</button>
+            </div>
+            <!-- Scanner Order Selection (For scanners and dilshan) -->
+            <div id="scannerOrderSection" class="action-buttons hidden">
+                <select id="orderSelector" style="width: 250px; padding: 12px; font-size: 14px;">
+                    <option value="">-- Select Order to Load --</option>
+                </select>
+                <button id="loadOrderBtn">📥 Load Order</button>
+            </div>
+            <!-- Standard Action Buttons -->
+            <div class="action-buttons">
+                <button id="resetBtn">🔄 Reset Order</button>
+                <button id="submitScanBtn" class="submit-btn">✅ Submit Scan</button>
+                <button id="exportBtn">📥 Export Data</button>
+                <button id="undoBtn" class="undo-btn">↩️ Undo Scan</button>
+                <button id="redoBtn" class="redo-btn">↪️ Redo Scan</button>
+                <button id="highlightOverScannedBtn" class="over-scan-btn">🚨 Highlight Over Scanned</button>
+                <button id="viewHistoryBtn" class="history-btn">📋 View Scan History</button>
+                <button id="logoutBtn">🚪 Logout</button>
+            </div>
+            <!-- Progress Bar -->
+            <div class="progress-container">
+                <div class="progress-title">🎯 Order Progress</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill">0%</div>
+                </div>
+            </div>
+            <!-- Legend -->
+            <div class="legend-container">
+                <h4 class="legend-title">📌 Status Legend</h4>
+                <div class="legend-items">
+                    <div class="legend-item">
+                        <span class="legend-color" style="background: #f94144;"></span>
+                        Over Scanned (in order, too many)
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color" style="background: #f72585;"></span>
+                        Extra Scanned (not in order)
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color" style="background: #10b981;"></span>
+                        Completed
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color" style="background: #ca8a04;"></span>
+                        Partial
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color" style="background: #dc2626;"></span>
+                        Not Scanned
+                    </div>
+                </div>
+            </div>
+            <!-- Dashboard Statistics Section -->
+            <div class="dashboard-stats">
+                <!-- Summary Card -->
+                <div class="summary-card">
+                    <h3>📊 Order Summary</h3>
+                    <div class="stat-item">
+                        <div>📦 Total Order Qty</div>
+                        <div class="stat-value" id="totalOrderQty">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div>🚨 Not in Order Qty</div>
+                        <div class="stat-value" id="notInOrderQty">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div>📈 Over-Ordered Qty</div>
+                        <div class="stat-value" id="overScannedQty">0</div>
+                    </div>
+                </div>
+                <!-- Scan Status Stats -->
+                <div class="scan-stats">
+                    <div class="summary-card">
+                        <h3>🔴 Not Scanned</h3>
+                        <div class="stat-value" id="notScannedCount">0</div>
+                    </div>
+                    <div class="summary-card">
+                        <h3>🟡 Partial</h3>
+                        <div class="stat-value" id="partialCount">0</div>
+                    </div>
+                    <div class="summary-card">
+                        <h3>🟢 Completed</h3>
+                        <div class="stat-value" id="completedCount">0</div>
+                    </div>
+                    <div class="summary-card">
+                        <h3>🟣 Extra Scanned</h3>
+                        <div class="stat-value" id="extraCount">0</div>
+                    </div>
+                    <div class="summary-card">
+                        <h3>🔢 Total Scanned</h3>
+                        <div class="stat-value" id="totalScanned">0</div>
+                    </div>
+                </div>
+            </div>
+            <div class="scan-area">
+                <h3>🎯 Scan Items Here</h3>
+                <p>Plug in your scanner and start scanning barcodes. The system will automatically process after 500ms.</p>
+                <input type="text" id="scannerInput" placeholder="Scan barcode here..." autofocus>
+                <div id="countdownTimer">0.5s</div>
+                <div class="auto-submit-info">✅ Barcode will be automatically submitted after 500 milliseconds of inactivity</div>
+                <!-- Manual Entry Section -->
+                <div class="manual-entry-section">
+                    <h4>⌨️ Manual Entry (if scanner fails)</h4>
+                    <div class="manual-input-container">
+                        <input type="text" id="manualInput" placeholder="Type barcode and press Enter or Submit">
+                        <button id="manualSubmitBtn" class="manual-submit-btn">📤 Submit</button>
+                    </div>
+                </div>
+                <div id="scannedItems">
+                    <p>Scanned items will appear here...</p>
+                </div>
+            </div>
+            <h3 style="text-align: center; margin: 30px 0 15px; color: #4361ee; font-weight: 600; font-size: 22px;">📋 Order Items</h3>
+            <table id="orderTable">
+                <thead>
+                    <tr>
+                        <th>🔖 Barcode</th>
+                        <th>📝 Description</th>
+                        <th>📦 Ordered Qty</th>
+                        <th>✅ Scanned Qty</th>
+                        <th>📊 Status</th>
+                    </tr>
+                </thead>
+                <tbody id="orderTableBody">
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 40px; font-size: 18px; color: #666;">
+                            Upload an order file to begin
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <!-- Scan History Modal -->
+        <div id="historyModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2 style="text-align: center; color: var(--purple); margin-bottom: 30px;">📋 Scan History</h2>
+                <div style="margin-bottom: 20px; display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
+                    <select id="historyOrderFilter" style="width: 200px; padding: 12px;">
+                        <option value="">All Orders</option>
+                    </select>
+                    <select id="historyUserFilter" style="width: 200px; padding: 12px;">
+                        <option value="">All Users</option>
+                        <option value="mithun">mithun</option>
+                        <option value="pathum">pathum</option>
+                        <option value="deneth">deneth</option>
+                        <option value="lakmal">lakmal</option>
+                        <option value="dilshan">dilshan</option>
+                    </select>
+                    <button id="applyHistoryFilter" class="history-btn">🔍 Filter</button>
+                </div>
+                <table id="historyTable">
+                    <thead>
+                        <tr>
+                            <th>📅 Date & Time</th>
+                            <th>🔢 Order Number</th>
+                            <th>👤 Scanned By</th>
+                            <th>📦 Total Ordered</th>
+                            <th>✅ Total Scanned</th>
+                            <th>⚠️ Issues</th>
+                            <th>🔍 Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTableBody">
+                        <!-- Dynamically populated -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- Scan Detail Modal -->
+        <div id="detailModal" class="modal">
+            <div class="modal-content">
+                <span class="close-detail">&times;</span>
+                <h2 style="text-align: center; color: var(--primary); margin-bottom: 30px;" id="detailTitle">Scan Details</h2>
+                <div id="detailNotes" style="margin-bottom: 20px; padding: 15px; background: #f0f9ff; border-radius: 10px; border-left: 4px solid var(--primary);">
+                    <strong>📝 Notes:</strong> <span id="detailNotesContent">No notes provided.</span>
+                </div>
+                <table id="detailTable">
+                    <thead>
+                        <tr>
+                            <th>🔖 Barcode</th>
+                            <th>📝 Description</th>
+                            <th>📦 Ordered</th>
+                            <th>✅ Scanned</th>
+                            <th>📊 Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="detailTableBody">
+                        <!-- Dynamically populated -->
+                    </tbody>
+                </table>
+                <div style="margin-top: 30px; text-align: center; padding: 20px; background: #f8fafc; border-radius: 12px;">
+                    <h3>📊 Summary</h3>
+                    <p><strong>Total Ordered:</strong> <span id="summaryOrdered">0</span></p>
+                    <p><strong>Total Scanned:</strong> <span id="summaryScanned">0</span></p>
+                    <p><strong>Over Scanned:</strong> <span id="summaryOver">0</span></p>
+                    <p><strong>Not in Order:</strong> <span id="summaryExtra">0</span></p>
+                </div>
+                <!-- Excel Export Button for Dilshan -->
+                <div style="margin-top: 30px; text-align: center;">
+                    <button id="exportExcelBtn" class="history-btn" style="padding: 12px 24px; font-size: 16px;">📄 Export as Excel</button>
+                </div>
+            </div>
+        </div>
+        <!-- Submit Note Modal -->
+        <div id="submitNoteModal" class="modal">
+            <div class="modal-content">
+                <h2 style="text-align: center; color: var(--primary); margin-bottom: 20px;">📝 Add Submission Note</h2>
+                <p style="text-align: center; color: #555; margin-bottom: 20px;">Please provide any notes or comments for this scan submission.</p>
+                <textarea id="submitNoteTextarea" placeholder="Enter your notes here... (e.g., 'Found 2 damaged items', 'Customer requested extra box')"></textarea>
+                <div style="text-align: center; margin-top: 25px;">
+                    <button id="cancelNoteBtn" style="background: #6b7280; margin-right: 15px; padding: 12px 24px;">Cancel</button>
+                    <button id="confirmNoteBtn" class="submit-btn" style="padding: 12px 24px;">✅ Submit with Note</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 🆕 Emergency Stop Button for Alarm -->
+    <button id="emergencyStopBtn">🚨 STOP SOUND 🚨</button>
+    <script>
+        // Ensure DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Global variables
+            let orderData = [];
+            let scannedItems = [];
+            let currentUser = "";
+            let typingTimer;
+            let countdownInterval;
+            const DONE_TYPING_INTERVAL = 500; // 500 milliseconds
+            // 🔁 Undo/Redo stacks
+            let scanHistory = []; // [{ barcode, wasInOrder, wasStatus, wasScannedQty, itemRef }]
+            let redoStack = [];
+            // 🆕 Order Management
+            let allOrders = {}; // Key: Order Number, Value: Array of order items
+            let currentOrderNumber = null; // Tracks which order is currently loaded
+            // 🆕 Scan History (now includes 'notes')
+            let scanRecords = [];
+            // 🆕 Submitted Orders (Locked Orders)
+            let submittedOrders = {}; // Key: Order Number, Value: true (if submitted)
+            // 🆕 Alarm Control
+            let alarmInterval = null;
+            let alarmStartTime = null;
+            const ALARM_DURATION = 30000; // 30 seconds in milliseconds
+            // DOM Elements
+            const loginSection = document.getElementById('loginSection');
+            const mainSection = document.getElementById('mainSection');
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+            const loginBtn = document.getElementById('loginBtn');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const orderFileInput = document.getElementById('orderFile');
+            const uploadBtn = document.getElementById('uploadBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const exportBtn = document.getElementById('exportBtn');
+            const scannerInput = document.getElementById('scannerInput');
+            const manualInput = document.getElementById('manualInput');
+            const manualSubmitBtn = document.getElementById('manualSubmitBtn');
+            const undoBtn = document.getElementById('undoBtn');
+            const redoBtn = document.getElementById('redoBtn');
+            const highlightOverScannedBtn = document.getElementById('highlightOverScannedBtn');
+            const scannedItemsDiv = document.getElementById('scannedItems');
+            const orderTableBody = document.getElementById('orderTableBody');
+            const countdownTimer = document.getElementById('countdownTimer');
+            // Progress Bar
+            const progressFill = document.getElementById('progressFill');
+            // Summary stats elements
+            const totalOrderQtyEl = document.getElementById('totalOrderQty');
+            const notInOrderQtyEl = document.getElementById('notInOrderQty');
+            const overScannedQtyEl = document.getElementById('overScannedQty');
+            const notScannedCountEl = document.getElementById('notScannedCount');
+            const partialCountEl = document.getElementById('partialCount');
+            const completedCountEl = document.getElementById('completedCount');
+            const extraCountEl = document.getElementById('extraCount');
+            const totalScannedEl = document.getElementById('totalScanned');
+            // 🆕 Order Management Elements
+            const orderNumberInput = document.getElementById('orderNumberInput');
+            const orderSelector = document.getElementById('orderSelector');
+            const adminUploadSection = document.getElementById('adminUploadSection');
+            const scannerOrderSection = document.getElementById('scannerOrderSection');
+            const loadOrderBtn = document.getElementById('loadOrderBtn');
+            // 🆕 Submit Button
+            const submitScanBtn = document.getElementById('submitScanBtn');
+            // 🆕 History Elements
+            const viewHistoryBtn = document.getElementById('viewHistoryBtn');
+            const historyModal = document.getElementById('historyModal');
+            const detailModal = document.getElementById('detailModal');
+            const historyTableBody = document.getElementById('historyTableBody');
+            const detailTableBody = document.getElementById('detailTableBody');
+            const detailTitle = document.getElementById('detailTitle');
+            const summaryOrdered = document.getElementById('summaryOrdered');
+            const summaryScanned = document.getElementById('summaryScanned');
+            const summaryOver = document.getElementById('summaryOver');
+            const summaryExtra = document.getElementById('summaryExtra');
+            const historyOrderFilter = document.getElementById('historyOrderFilter');
+            const historyUserFilter = document.getElementById('historyUserFilter');
+            const applyHistoryFilter = document.getElementById('applyHistoryFilter');
+            // 🆕 Current User Display
+            const currentUserNameEl = document.getElementById('currentUserName');
+            // 🆕 Submit Note Modal Elements
+            const submitNoteModal = document.getElementById('submitNoteModal');
+            const submitNoteTextarea = document.getElementById('submitNoteTextarea');
+            const cancelNoteBtn = document.getElementById('cancelNoteBtn');
+            const confirmNoteBtn = document.getElementById('confirmNoteBtn');
+            // 🆕 Detail Notes Elements
+            const detailNotes = document.getElementById('detailNotes');
+            const detailNotesContent = document.getElementById('detailNotesContent');
+            // 🆕 Excel Export Button
+            const exportExcelBtn = document.getElementById('exportExcelBtn');
+            // 🆕 Emergency Stop Button
+            const emergencyStopBtn = document.getElementById('emergencyStopBtn');
+            // Close modal when clicking on X
+            document.querySelector('.close').onclick = function() {
+                historyModal.style.display = "none";
+            }
+            document.querySelector('.close-detail').onclick = function() {
+                detailModal.style.display = "none";
+            }
+            // Close modal when clicking outside
+            window.onclick = function(event) {
+                if (event.target == historyModal) {
+                    historyModal.style.display = "none";
+                }
+                if (event.target == detailModal) {
+                    detailModal.style.display = "none";
+                }
+                if (event.target == submitNoteModal) {
+                    submitNoteModal.style.display = "none";
+                }
+            }
+            // Login functionality
+            loginBtn.addEventListener('click', function() {
+                const username = usernameInput.value;
+                const password = passwordInput.value;
+                if (username === "" || password === "") {
+                    alert("⚠️ Please select your username and enter the password.");
+                    return;
+                }
+                if (password !== "catalan") {
+                    alert("❌ Incorrect password. The password for everyone is 'catalan'.");
+                    passwordInput.value = "";
+                    passwordInput.focus();
+                    return;
+                }
+                if (!["lakmal", "dilshan", "mithun", "pathum", "deneth"].includes(username)) {
+                    alert("❌ Invalid username selected. Please choose from the list.");
+                    return;
+                }
+                currentUser = username;
+                // Update current user display
+                currentUserNameEl.textContent = username;
+                // Show/hide UI based on user role
+                if (username === 'lakmal') {
+                    adminUploadSection.classList.remove('hidden');
+                    scannerOrderSection.classList.add('hidden');
+                    viewHistoryBtn.classList.add('hidden');
+                } else if (username === 'dilshan') {
+                    adminUploadSection.classList.add('hidden');
+                    scannerOrderSection.classList.remove('hidden');
+                    viewHistoryBtn.classList.remove('hidden');
+                    loadOrdersForHistoryFilter();
+                } else { // Scanner
+                    adminUploadSection.classList.add('hidden');
+                    scannerOrderSection.classList.remove('hidden');
+                    viewHistoryBtn.classList.add('hidden');
+                }
+                // Load saved orders and history
+                loadAllData();
+                populateOrderSelector();
+                loginSection.classList.add('hidden');
+                mainSection.classList.remove('hidden');
+                document.getElementById('scannerInput').focus();
+                alert(`✅ Welcome, ${username}!`);
+            });
+            // Auto-focus the username field when the page loads
+            usernameInput.focus();
+            // Logout functionality
+            logoutBtn.addEventListener('click', function() {
+                mainSection.classList.add('hidden');
+                loginSection.classList.remove('hidden');
+                usernameInput.value = "";
+                passwordInput.value = "";
+                resetOrder();
+                // Re-focus the username field after logout
+                usernameInput.focus();
+            });
+            // Upload order functionality (Admin Only - lakmal)
+            uploadBtn.addEventListener('click', function() {
+                const orderNumber = orderNumberInput.value.trim();
+                const file = orderFileInput.files[0];
+                if (!orderNumber) {
+                    alert("Please enter an Order Number");
+                    return;
+                }
+                if (!file) {
+                    alert("Please select a file first");
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const content = e.target.result;
+                    parseCSV(content);
+                    allOrders[orderNumber] = JSON.parse(JSON.stringify(orderData));
+                    saveOrdersToLocalStorage();
+                    populateOrderSelector();
+                    loadOrdersForHistoryFilter();
+                    alert(`Order #${orderNumber} uploaded and saved successfully!`);
+                    orderNumberInput.value = '';
+                    orderFileInput.value = '';
+                };
+                reader.readAsText(file);
+            });
+            // Load selected order for scanning
+            loadOrderBtn.addEventListener('click', function() {
+                const selectedOrderNumber = orderSelector.value;
+                if (!selectedOrderNumber) {
+                    alert("Please select an order to load.");
+                    return;
+                }
+                if (submittedOrders[selectedOrderNumber]) {
+                    alert(`Order #${selectedOrderNumber} has already been submitted and is locked. It cannot be scanned again.`);
+                    return;
+                }
+                const loadedOrder = allOrders[selectedOrderNumber];
+                if (!loadedOrder) {
+                    alert("Selected order not found.");
+                    return;
+                }
+                orderData = loadedOrder.map(item => ({
+                    ...item,
+                    scannedQty: 0,
+                    status: "Not Scanned"
+                }));
+                currentOrderNumber = selectedOrderNumber;
+                renderOrderTable();
+                updateDashboardStats();
+                updateProgressBar();
+                updateScannedItemsDisplay();
+                scannedItems = [];
+                scanHistory = [];
+                redoStack = [];
+                alert(`Order #${selectedOrderNumber} loaded successfully. Ready to scan!`);
+            });
+            // Reset order functionality
+            resetBtn.addEventListener('click', function() {
+                if (confirm("Are you sure you want to reset the current order?")) {
+                    if (currentOrderNumber && allOrders[currentOrderNumber]) {
+                        orderData = allOrders[currentOrderNumber].map(item => ({
+                            ...item,
+                            scannedQty: 0,
+                            status: "Not Scanned"
+                        }));
+                        scannedItems = [];
+                        scanHistory = [];
+                        redoStack = [];
+                        renderOrderTable();
+                        updateScannedItemsDisplay();
+                        updateDashboardStats();
+                        updateProgressBar();
+                        alert(`Scan progress for Order #${currentOrderNumber} has been reset.`);
+                    } else {
+                        resetOrder();
+                    }
+                }
+            });
+            // 🆕 Enhanced Submit Scan functionality with Notes
+            submitScanBtn.addEventListener('click', function() {
+                if (!currentOrderNumber) {
+                    alert("No order is currently loaded. Please load an order first.");
+                    return;
+                }
+                if (orderData.length === 0) {
+                    alert("No order data to submit.");
+                    return;
+                }
+                // Show the note modal
+                submitNoteModal.style.display = "block";
+                submitNoteTextarea.focus();
+            });
+            // 🆕 Handle Cancel Note
+            cancelNoteBtn.addEventListener('click', function() {
+                submitNoteModal.style.display = "none";
+            });
+            // 🆕 Handle Confirm Note and Submit
+            confirmNoteBtn.addEventListener('click', function() {
+                const userNote = submitNoteTextarea.value.trim();
+                submitNoteModal.style.display = "none";
+                // Proceed with submission
+                // ✅ Lock this order - mark as submitted
+                submittedOrders[currentOrderNumber] = true;
+                saveSubmittedOrdersToLocalStorage();
+                // Create a record of this scan session, now including notes
+                const scanRecord = {
+                    id: Date.now(),
+                    dateTime: new Date().toISOString(),
+                    orderNumber: currentOrderNumber,
+                    scannedBy: currentUser,
+                    items: JSON.parse(JSON.stringify(orderData)),
+                    scanLog: [...scannedItems],
+                    notes: userNote // 🆕 Store the note
+                };
+                // Save to history
+                scanRecords.push(scanRecord);
+                saveScanHistory();
+                alert(`Scan session for Order #${currentOrderNumber} successfully submitted by ${currentUser} at ${new Date().toLocaleString()}!`);
+                // Auto-reset after submit
+                resetOrder();
+                // Refresh order selector to reflect locked status
+                populateOrderSelector();
+                // Clear the textarea for next time
+                submitNoteTextarea.value = '';
+            });
+            // Export functionality — PROMPTS FOR FILENAME
+            exportBtn.addEventListener('click', function() {
+                if (orderData.length === 0) {
+                    alert("No data to export");
+                    return;
+                }
+                let defaultName = `order_scan_${new Date().toISOString().slice(0,10)}`;
+                const filename = prompt("Enter export filename (without extension):", defaultName);
+                if (!filename) return;
+                let csvContent = "Barcode,Description,Ordered Qty,Scanned Qty,Status\n";
+                orderData.forEach(item => {
+                    csvContent += `"${item.barcode}","${item.description}",${item.orderedQty},${item.scannedQty},"${item.status}"\n`;
+                });
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.setAttribute('href', url);
+                link.setAttribute('download', `${filename}.csv`);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
+            // 🔁 Undo Scan
+            undoBtn.addEventListener('click', function() {
+                if (scanHistory.length === 0) {
+                    alert("No scans to undo");
+                    return;
+                }
+                const lastAction = scanHistory.pop();
+                redoStack.push(lastAction);
+                if (lastAction.wasInOrder) {
+                    // It was an item in the order
+                    lastAction.itemRef.scannedQty = lastAction.wasScannedQty;
+                    updateItemStatus(lastAction.itemRef);
+                } else {
+                    // It was "Not in Order" item — find and remove the most recent occurrence
+                    let foundIndex = -1;
+                    for (let i = orderData.length - 1; i >= 0; i--) {
+                        if (orderData[i].barcode === lastAction.barcode &&
+                            orderData[i].status === "Not in the order") {
+                            if (orderData[i].scannedQty > 0) {
+                                foundIndex = i;
+                                break;
+                            }
+                        }
+                    }
+                    if (foundIndex !== -1) {
+                        if (orderData[foundIndex].scannedQty === 1) {
+                            orderData.splice(foundIndex, 1);
+                        } else {
+                            orderData[foundIndex].scannedQty -= 1;
+                            if (orderData[foundIndex].scannedQty === 0) {
+                                orderData.splice(foundIndex, 1);
+                            }
+                        }
+                    }
+                }
+                const scanIndex = scannedItems.lastIndexOf(lastAction.barcode);
+                if (scanIndex !== -1) {
+                    scannedItems.splice(scanIndex, 1);
+                }
+                renderOrderTable();
+                updateScannedItemsDisplay();
+                updateDashboardStats();
+                updateProgressBar();
+            });
+            // 🔁 Redo Scan
+            redoBtn.addEventListener('click', function() {
+                if (redoStack.length === 0) {
+                    alert("No scans to redo");
+                    return;
+                }
+                const actionToRedo = redoStack.pop();
+                scanHistory.push(actionToRedo);
+                processScan(actionToRedo.barcode, true); // true = isRedo
+            });
+            // 🚨 Highlight Over Scanned Items
+            highlightOverScannedBtn.addEventListener('click', function() {
+                const rows = document.querySelectorAll('#orderTableBody tr');
+                rows.forEach(row => {
+                    row.style.outline = '';
+                    row.style.boxShadow = '';
+                });
+                const overScannedRows = [];
+                orderData.forEach((item, index) => {
+                    if (item.status === "Over Scanned") {
+                        overScannedRows.push(index);
+                    }
+                });
+                if (overScannedRows.length === 0) {
+                    alert("No items have been over-scanned!");
+                    return;
+                }
+                overScannedRows.forEach((rowIndex, idx) => {
+                    const row = document.querySelectorAll('#orderTableBody tr')[rowIndex];
+                    if (row) {
+                        row.style.outline = '3px solid #f94144';
+                        row.style.boxShadow = '0 0 15px rgba(249, 65, 68, 0.6)';
+                        row.style.transition = 'all 0.3s ease';
+                        if (idx === 0) {
+                            row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+                    }
+                });
+                setTimeout(() => {
+                    overScannedRows.forEach(rowIndex => {
+                        const row = document.querySelectorAll('#orderTableBody tr')[rowIndex];
+                        if (row) {
+                            row.style.outline = '3px solid #f37a1d';
+                            row.style.boxShadow = '0 0 15px rgba(243, 122, 29, 0.4)';
+                        }
+                    });
+                }, 1000);
+            });
+            // Auto-submit after 500ms of inactivity
+            scannerInput.addEventListener('input', function() {
+                clearTimeout(typingTimer);
+                clearInterval(countdownInterval);
+                countdownTimer.style.display = 'block';
+                let timeLeft = 500;
+                countdownTimer.textContent = '0.5s';
+                countdownInterval = setInterval(() => {
+                    timeLeft -= 100;
+                    if (timeLeft <= 0) {
+                        clearInterval(countdownInterval);
+                        countdownTimer.style.display = 'none';
+                    } else {
+                        countdownTimer.textContent = (timeLeft / 1000).toFixed(1) + 's';
+                    }
+                }, 100);
+                typingTimer = setTimeout(() => {
+                    processBarcode();
+                    clearInterval(countdownInterval);
+                    countdownTimer.style.display = 'none';
+                }, DONE_TYPING_INTERVAL);
+            });
+            scannerInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    processBarcode();
+                    clearInterval(countdownInterval);
+                    countdownTimer.style.display = 'none';
+                }
+            });
+            function processBarcode() {
+                const barcode = scannerInput.value.trim();
+                if (barcode) {
+                    processScan(barcode);
+                    scannerInput.value = '';
+                    setTimeout(() => {
+                        scannerInput.focus();
+                    }, 50);
+                }
+            }
+            manualSubmitBtn.addEventListener('click', function() {
+                const barcode = manualInput.value.trim();
+                if (barcode) {
+                    processScan(barcode);
+                    manualInput.value = '';
+                    manualInput.focus();
+                } else {
+                    alert("Please enter a barcode");
+                }
+            });
+            manualInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const barcode = manualInput.value.trim();
+                    if (barcode) {
+                        processScan(barcode);
+                        manualInput.value = '';
+                    }
+                }
+            });
+            // 🆕 Function to play a continuous alarm for 30 seconds
+            function playContinuousAlarm() {
+                stopAlarm(); // Stop any existing alarm first
+                try {
+                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    // Use a siren pattern for urgency
+                    oscillator.type = 'sine';
+                    const now = audioContext.currentTime;
+                    // Create a rising and falling pitch effect in a loop
+                    let time = now;
+                    const segmentDuration = 0.5; // 500ms per up/down segment
+                    for (let i = 0; i < 60; i++) { // 60 segments = 30 seconds
+                        const freqStart = i % 2 === 0 ? 300 : 800;
+                        const freqEnd = i % 2 === 0 ? 800 : 300;
+                        oscillator.frequency.setValueAtTime(freqStart, time);
+                        oscillator.frequency.linearRampToValueAtTime(freqEnd, time + segmentDuration);
+                        time += segmentDuration;
+                    }
+                    // Set volume
+                    gainNode.gain.setValueAtTime(0.5, now);
+                    gainNode.gain.exponentialRampToValueAtTime(0.001, now + 30); // Fade out at the end
+                    // Start the oscillator
+                    oscillator.start(now);
+                    oscillator.stop(now + 30); // Stop after 30 seconds
+                    // Store the oscillator so we can stop it manually if needed
+                    window.currentOscillator = oscillator;
+                    window.currentAudioContext = audioContext;
+                    // Show the emergency stop button
+                    emergencyStopBtn.style.display = 'block';
+                    // Set a timeout to automatically stop and hide the button after 30 seconds
+                    alarmStartTime = Date.now();
+                    alarmInterval = setInterval(() => {
+                        const elapsed = Date.now() - alarmStartTime;
+                        if (elapsed >= ALARM_DURATION) {
+                            stopAlarm();
+                        }
+                    }, 1000);
+                } catch (error) {
+                    console.error("Web Audio API not supported or error:", error);
+                    // Fallback: Use browser's alert
+                    alert("🚨🚨🚨 CRITICAL ERROR: Wrong item or over scanned! 🚨🚨🚨");
+                }
+            }
+            // 🆕 Function to stop the alarm
+            function stopAlarm() {
+                if (window.currentOscillator) {
+                    window.currentOscillator.stop();
+                    window.currentOscillator = null;
+                }
+                if (window.currentAudioContext) {
+                    window.currentAudioContext.close();
+                    window.currentAudioContext = null;
+                }
+                if (alarmInterval) {
+                    clearInterval(alarmInterval);
+                    alarmInterval = null;
+                }
+                emergencyStopBtn.style.display = 'none';
+            }
+            // 🆕 Set up the emergency stop button
+            emergencyStopBtn.addEventListener('click', function() {
+                stopAlarm();
+                alert("Alarm stopped manually.");
+            });
+            // 🆕 Function to show a temporary alert popup
+            function showAlertPopup(message) {
+                const popup = document.createElement('div');
+                popup.className = 'alert-popup';
+                popup.innerHTML = message;
+                document.body.appendChild(popup);
+                setTimeout(() => {
+                    if (popup.parentNode) {
+                        document.body.removeChild(popup);
+                    }
+                }, 2500); // Show for 2.5 seconds
+            }
+            // 🔁 Process scanned barcode (with optional redo flag)
+            function processScan(barcode, isRedo = false) {
+                let historyEntry = null;
+                scannedItems.push(barcode);
+                const orderItem = orderData.find(item => item.barcode === barcode);
+                if (orderItem) {
+                    // Check if this scan will cause an over-scan
+                    if (orderItem.scannedQty >= orderItem.orderedQty) {
+                        // This is an over-scan!
+                        playContinuousAlarm(); // 🆕 Play 30-second alarm
+                        showAlertPopup(`🚨🚨 OVER SCANNED! 🚨🚨<br>Item: ${barcode}<br>Ordered: ${orderItem.orderedQty}, Already Scanned: ${orderItem.scannedQty}<br><strong>Alarm will sound for 30 seconds.</strong>`);
+                    }
+                    if (!isRedo) {
+                        historyEntry = {
+                            barcode: barcode,
+                            wasInOrder: true,
+                            wasScannedQty: orderItem.scannedQty,
+                            wasStatus: orderItem.status,
+                            itemRef: orderItem
+                        };
+                        scanHistory.push(historyEntry);
+                        redoStack = [];
+                    }
+                    orderItem.scannedQty += 1;
+                    updateItemStatus(orderItem);
+                } else {
+                    // This is a wrong item (not in order)
+                    playContinuousAlarm(); // 🆕 Play 30-second alarm
+                    showAlertPopup(`❌❌ WRONG ITEM! ❌❌<br>Barcode: ${barcode}<br>This item is NOT in the current order.<br><strong>Alarm will sound for 30 seconds.</strong>`);
+                    if (!isRedo) {
+                        historyEntry = {
+                            barcode: barcode,
+                            wasInOrder: false,
+                            wasScannedQty: 0,
+                            wasStatus: null,
+                            itemRef: null
+                        };
+                        scanHistory.push(historyEntry);
+                        redoStack = [];
+                    }
+                    const notInOrderItem = {
+                        barcode: barcode,
+                        description: "Not in original order",
+                        orderedQty: 0,
+                        scannedQty: 1,
+                        status: "Not in the order"
+                    };
+                    orderData.push(notInOrderItem);
+                }
+                renderOrderTable();
+                updateScannedItemsDisplay();
+                updateDashboardStats();
+                updateProgressBar();
+            }
+            function parseCSV(csv) {
+                const lines = csv.split('\n');
+                orderData = [];
+                for (let i = 1; i < lines.length; i++) {
+                    const line = lines[i].trim();
+                    if (line === '') continue;
+                    const fields = parseCSVLine(line);
+                    if (fields.length >= 3) {
+                        orderData.push({
+                            barcode: fields[0],
+                            description: fields[1],
+                            orderedQty: parseInt(fields[2]) || 0,
+                            scannedQty: 0,
+                            status: "Not Scanned"
+                        });
+                    }
+                }
+            }
+            function parseCSVLine(line) {
+                const result = [];
+                let current = '';
+                let inQuotes = false;
+                for (let i = 0; i < line.length; i++) {
+                    const char = line[i];
+                    if (char === '"' && (i === 0 || line[i-1] !== '\\')) {
+                        inQuotes = !inQuotes;
+                    } else if (char === ',' && !inQuotes) {
+                        result.push(current);
+                        current = '';
+                    } else {
+                        current += char;
+                    }
+                }
+                result.push(current);
+                return result;
+            }
+            function updateItemStatus(item) {
+                if (item.scannedQty === 0) {
+                    item.status = "Not Scanned";
+                } else if (item.scannedQty < item.orderedQty) {
+                    item.status = "Partial";
+                } else if (item.scannedQty === item.orderedQty) {
+                    item.status = "Completed";
+                } else if (item.scannedQty > item.orderedQty) {
+                    item.status = "Over Scanned";
+                }
+            }
+            function renderOrderTable() {
+                orderTableBody.innerHTML = '';
+                if (orderData.length === 0) {
+                    orderTableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; font-size: 18px; color: #666;">Upload an order file to begin</td></tr>';
+                    return;
+                }
+                orderData.forEach(item => {
+                    const row = document.createElement('tr');
+                    switch(item.status) {
+                        case 'Not Scanned':
+                            row.className = 'status-not-scanned';
+                            break;
+                        case 'Partial':
+                            row.className = 'status-partial';
+                            break;
+                        case 'Completed':
+                            row.className = 'status-completed';
+                            break;
+                        case 'Over Scanned':
+                            row.className = 'status-over-scanned';
+                            break;
+                        case 'Not in the order':
+                            row.className = 'status-not-in-order';
+                            break;
+                    }
+                    row.innerHTML = `
+                        <td>${item.barcode}</td>
+                        <td>${item.description}</td>
+                        <td>${item.orderedQty}</td>
+                        <td>${item.scannedQty}</td>
+                        <td>${item.status}</td>
+                    `;
+                    orderTableBody.appendChild(row);
+                });
+            }
+            function updateScannedItemsDisplay() {
+                if (scannedItems.length === 0) {
+                    scannedItemsDiv.innerHTML = '<p style="text-align:center; color:#666; font-style:italic;">Scanned items will appear here...</p>';
+                    return;
+                }
+                let html = '<h4 style="color: #4361ee; margin-bottom: 15px; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">📌 Recently Scanned Items:</h4>';
+                const recentScans = scannedItems.slice(-10).reverse();
+                html += '<ul style="padding-left: 20px;">';
+                recentScans.forEach(scan => {
+                    html += `<li style="margin: 8px 0; padding: 8px; background: #f0f9ff; border-radius: 8px; border-left: 3px solid #4361ee;">${scan}</li>`;
+                });
+                html += '</ul>';
+                html += `<p style="font-weight: 600; color: #4361ee; margin-top: 20px;"><strong>📊 Total Scans:</strong> ${scannedItems.length}</p>`;
+                scannedItemsDiv.innerHTML = html;
+            }
+            function updateDashboardStats() {
+                let totalOrderQty = 0;
+                let notInOrderQty = 0;
+                let overScannedQty = 0;
+                let notScannedCount = 0;
+                let partialCount = 0;
+                let completedCount = 0;
+                let extraCount = 0;
+                orderData.forEach(item => {
+                    if (item.status === "Not in the order") {
+                        notInOrderQty += item.scannedQty;
+                        extraCount += 1;
+                    } else {
+                        totalOrderQty += item.orderedQty;
+                        if (item.scannedQty > item.orderedQty) {
+                            overScannedQty += (item.scannedQty - item.orderedQty);
+                        }
+                        switch(item.status) {
+                            case 'Not Scanned':
+                                notScannedCount += 1;
+                                break;
+                            case 'Partial':
+                                partialCount += 1;
+                                break;
+                            case 'Completed':
+                                completedCount += 1;
+                                break;
+                            case 'Over Scanned':
+                                extraCount += 1;
+                                break;
+                        }
+                    }
+                });
+                totalOrderQtyEl.textContent = totalOrderQty;
+                notInOrderQtyEl.textContent = notInOrderQty;
+                overScannedQtyEl.textContent = overScannedQty;
+                notScannedCountEl.textContent = notScannedCount;
+                partialCountEl.textContent = partialCount;
+                completedCountEl.textContent = completedCount;
+                extraCountEl.textContent = extraCount;
+                totalScannedEl.textContent = scannedItems.length;
+            }
+            function updateProgressBar() {
+                const totalOrdered = orderData
+                    .filter(item => item.status !== "Not in the order")
+                    .reduce((sum, item) => sum + item.orderedQty, 0);
+                const totalScannedInOrder = orderData
+                    .filter(item => item.status !== "Not in the order")
+                    .reduce((sum, item) => sum + Math.min(item.scannedQty, item.orderedQty), 0);
+                let percent = totalOrdered > 0 ? Math.round((totalScannedInOrder / totalOrdered) * 100) : 0;
+                percent = Math.min(percent, 100);
+                progressFill.style.width = percent + '%';
+                progressFill.textContent = percent + '%';
+            }
+            function resetOrder() {
+                orderData = [];
+                scannedItems = [];
+                scanHistory = [];
+                redoStack = [];
+                currentOrderNumber = null;
+                orderFileInput.value = '';
+                scannerInput.value = '';
+                manualInput.value = '';
+                renderOrderTable();
+                updateScannedItemsDisplay();
+                updateDashboardStats();
+                updateProgressBar();
+                clearTimeout(typingTimer);
+                clearInterval(countdownInterval);
+                countdownTimer.style.display = 'none';
+                // Ensure alarm is stopped if active
+                stopAlarm();
+            }
+            function saveOrdersToLocalStorage() {
+                localStorage.setItem('catalanCompanyOrders', JSON.stringify(allOrders));
+            }
+            function loadOrdersFromLocalStorage() {
+                const saved = localStorage.getItem('catalanCompanyOrders');
+                if (saved) {
+                    allOrders = JSON.parse(saved);
+                }
+            }
+            function populateOrderSelector() {
+                orderSelector.innerHTML = '<option value="">-- Select Order to Load --</option>';
+                for (const orderNum in allOrders) {
+                    if (submittedOrders[orderNum]) {
+                        continue;
+                    }
+                    const option = document.createElement('option');
+                    option.value = orderNum;
+                    option.textContent = orderNum;
+                    orderSelector.appendChild(option);
+                }
+            }
+            function saveScanHistory() {
+                localStorage.setItem('catalanCompanyScanHistory', JSON.stringify(scanRecords));
+            }
+            function loadScanHistory() {
+                const saved = localStorage.getItem('catalanCompanyScanHistory');
+                if (saved) {
+                    scanRecords = JSON.parse(saved);
+                }
+            }
+            function saveSubmittedOrdersToLocalStorage() {
+                localStorage.setItem('catalanCompanySubmittedOrders', JSON.stringify(submittedOrders));
+            }
+            function loadSubmittedOrdersFromLocalStorage() {
+                const saved = localStorage.getItem('catalanCompanySubmittedOrders');
+                if (saved) {
+                    submittedOrders = JSON.parse(saved);
+                }
+            }
+            function loadAllData() {
+                loadOrdersFromLocalStorage();
+                loadScanHistory();
+                loadSubmittedOrdersFromLocalStorage();
+            }
+            // 🆕 View History Button (for dilshan and lakmal)
+            viewHistoryBtn.addEventListener('click', function() {
+                renderHistoryTable();
+                historyModal.style.display = "block";
+            });
+            function loadOrdersForHistoryFilter() {
+                historyOrderFilter.innerHTML = '<option value="">All Orders</option>';
+                for (const orderNum in allOrders) {
+                    const option = document.createElement('option');
+                    option.value = orderNum;
+                    option.textContent = orderNum;
+                    historyOrderFilter.appendChild(option);
+                }
+            }
+            applyHistoryFilter.addEventListener('click', function() {
+                renderHistoryTable();
+            });
+            // 🆕 Render History Table with filtering
+            function renderHistoryTable() {
+                historyTableBody.innerHTML = '';
+                if (scanRecords.length === 0) {
+                    historyTableBody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px;">No scan history available.</td></tr>';
+                    return;
+                }
+                const orderFilter = historyOrderFilter.value;
+                const userFilter = historyUserFilter.value;
+                let filteredRecords = scanRecords.filter(record => {
+                    if (orderFilter && record.orderNumber !== orderFilter) {
+                        return false;
+                    }
+                    if (userFilter && record.scannedBy !== userFilter) {
+                        return false;
+                    }
+                    return true;
+                });
+                filteredRecords.sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime));
+                filteredRecords.forEach(record => {
+                    const row = document.createElement('tr');
+                    const date = new Date(record.dateTime);
+                    const formattedDate = date.toLocaleString();
+                    let totalOrdered = 0;
+                    let totalScanned = 0;
+                    let overScanned = 0;
+                    let notInOrder = 0;
+                    record.items.forEach(item => {
+                        if (item.status !== "Not in the order") {
+                            totalOrdered += item.orderedQty;
+                            totalScanned += item.scannedQty;
+                            if (item.scannedQty > item.orderedQty) {
+                                overScanned += (item.scannedQty - item.orderedQty);
+                            }
+                        } else {
+                            notInOrder += item.scannedQty;
+                        }
+                    });
+                    const hasIssues = overScanned > 0 || notInOrder > 0;
+                    const issuesText = hasIssues ? `Over: ${overScanned}, Extra: ${notInOrder}` : "None";
+                    row.innerHTML = `
+                        <td>${formattedDate}</td>
+                        <td>${record.orderNumber}</td>
+                        <td>${record.scannedBy}</td>
+                        <td>${totalOrdered}</td>
+                        <td>${totalScanned}</td>
+                        <td>${issuesText}</td>
+                        <td>
+                            <button class="history-btn" onclick="showScanDetail(${record.id})" style="padding: 8px 16px; font-size: 14px;">
+                                View Details
+                            </button>
+                        </td>
+                    `;
+                    historyTableBody.appendChild(row);
+                });
+            }
+            // 🆕 Show Scan Detail (now shows notes)
+            window.showScanDetail = function(recordId) {
+                const record = scanRecords.find(r => r.id === recordId);
+                if (!record) return;
+                detailTitle.textContent = `Scan Details - Order #${record.orderNumber} by ${record.scannedBy} at ${new Date(record.dateTime).toLocaleString()}`;
+                // 🆕 Display the note
+                if (record.notes && record.notes.trim() !== '') {
+                    detailNotes.style.display = 'block';
+                    detailNotesContent.textContent = record.notes;
+                } else {
+                    detailNotes.style.display = 'block';
+                    detailNotesContent.textContent = 'No notes provided.';
+                }
+                detailTableBody.innerHTML = '';
+                record.items.forEach(item => {
+                    const row = document.createElement('tr');
+                    let rowClass = '';
+                    switch(item.status) {
+                        case 'Not Scanned': rowClass = 'status-not-scanned'; break;
+                        case 'Partial': rowClass = 'status-partial'; break;
+                        case 'Completed': rowClass = 'status-completed'; break;
+                        case 'Over Scanned': rowClass = 'status-over-scanned'; break;
+                        case 'Not in the order': rowClass = 'status-not-in-order'; break;
+                    }
+                    row.className = rowClass;
+                    row.innerHTML = `
+                        <td>${item.barcode}</td>
+                        <td>${item.description}</td>
+                        <td>${item.orderedQty}</td>
+                        <td>${item.scannedQty}</td>
+                        <td>${item.status}</td>
+                    `;
+                    detailTableBody.appendChild(row);
+                });
+                let totalOrdered = 0;
+                let totalScanned = 0;
+                let overScanned = 0;
+                let notInOrder = 0;
+                record.items.forEach(item => {
+                    if (item.status !== "Not in the order") {
+                        totalOrdered += item.orderedQty;
+                        totalScanned += item.scannedQty;
+                        if (item.scannedQty > item.orderedQty) {
+                            overScanned += (item.scannedQty - item.orderedQty);
+                        }
+                    } else {
+                        notInOrder += item.scannedQty;
+                    }
+                });
+                summaryOrdered.textContent = totalOrdered;
+                summaryScanned.textContent = totalScanned;
+                summaryOver.textContent = overScanned;
+                summaryExtra.textContent = notInOrder;
+                // 🆕 Show Excel button only for Dilshan
+                if (currentUser === 'dilshan') {
+                    exportExcelBtn.style.display = 'inline-block';
+                    // Set up Excel export for this specific record
+                    exportExcelBtn.onclick = function() {
+                        exportRecordAsExcel(record);
+                    };
+                } else {
+                    exportExcelBtn.style.display = 'none';
+                }
+                detailModal.style.display = "block";
+            };
+            // 🆕 Function to export a scan record as Excel
+            function exportRecordAsExcel(record) {
+                // Create a new workbook
+                const wb = XLSX.utils.book_new();
+                // Prepare data for the main sheet
+                const data = [];
+                // Add header row
+                data.push(["Barcode", "Description", "Ordered Qty", "Scanned Qty", "Status"]);
+                // Add data rows
+                record.items.forEach(item => {
+                    data.push([
+                        item.barcode,
+                        item.description,
+                        item.orderedQty,
+                        item.scannedQty,
+                        item.status
+                    ]);
+                });
+                // Create a worksheet from the data
+                const ws = XLSX.utils.aoa_to_sheet(data);
+                // Add the worksheet to the workbook
+                XLSX.utils.book_append_sheet(wb, ws, "Scan Details");
+                // Generate filename
+                const filename = `Scan_Record_${record.orderNumber}_${new Date(record.dateTime).toISOString().slice(0,10)}.xlsx`;
+                // Export the file
+                XLSX.writeFile(wb, filename);
+                alert(`Scan record exported successfully as ${filename}!`);
+            }
+            window.addEventListener('load', function() {
+                scannerInput.focus();
+            });
+        });
+    </script>
+    <!-- SheetJS CDN for Excel export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</body>
+</html>
